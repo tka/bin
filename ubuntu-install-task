@@ -48,6 +48,20 @@ if [ ! -e /etc/init.d/nginx ]; then
     chmod +x /etc/init.d/nginx
 fi
 
+if [ ! -e /etc/logrotate.d/nginx ]; then
+ echo '/usr/local/nginx/logs/*.log {\n
+  daily\n
+  missingok\n
+  rotate 8\n
+  compress\n
+  delaycompress\n
+  notifempty\n
+  postrotate\n
+    kill -USR1 `cat /opt/logs/nginx.pid`\n
+  endscript\n
+}' > /etc/logrotate.d/nginx
+fi
+
 # Create the user for rails apps
 if [ ! -d /home/apps ]; then
     yes | adduser --quiet --disabled-password apps
